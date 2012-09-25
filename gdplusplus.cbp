@@ -37,8 +37,8 @@
 			<Add library="dl" />
 		</Linker>
 		<Unit filename="gd_protos.h" />
-		<Unit filename="gd_stubs.cpp" />
-		<Unit filename="gd_stubs.h" />
+		<Unit filename="gdplusplus.cpp" />
+		<Unit filename="gdplusplus.h" />
 		<Unit filename="main.cpp" />
 		<Extensions>
 			<code_completion />
