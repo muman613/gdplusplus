@@ -1,7 +1,7 @@
 #include <gd.h>
 #include <dlfcn.h>
 #include "gd_protos.h"
-#include "gd_stubs.h"
+#include "gdplusplus.h"
 
 gdLibrary::gdLibrary()
 :   m_isValid(false)
@@ -118,10 +118,16 @@ gdLibrary::gdLibrary()
     gdImageCompare = (_gdImageCompare)dlsym( m_lib, "gdImageCompare" );
     gdImageSharpen = (_gdImageSharpen)dlsym( m_lib, "gdImageSharpen" );
 
+    return;
 }
 
 gdLibrary::~gdLibrary()
 {
     // dtor
     dlclose( m_lib );
+    m_isValid = false;
+}
+
+bool gdLibrary::is_valid() const {
+    return m_isValid;
 }

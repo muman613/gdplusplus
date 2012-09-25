@@ -1,7 +1,17 @@
+/**
+ *
+ */
+
+#ifndef _GDPLUSPLUS_H__
+#define __GDPLUSPLUS_H__
+
 class gdLibrary {
 public:
     gdLibrary();
     virtual ~gdLibrary();
+
+    bool is_valid() const;
+
 
     _gdAlphaBlend gdAlphaBlend;
     _gdImageCreate gdImageCreate;
@@ -110,3 +120,4 @@ private:
 };
 
 
+#endif
