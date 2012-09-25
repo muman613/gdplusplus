@@ -26,6 +26,13 @@ int main(int argc, const char* argv[])
         fp= fopen("copy.png", "w");
         gd.gdImagePng( image, fp );
         fclose(fp);
+
+        gd.gdFree( image );
+        gdImageObject testObject(&gd, "image.jpg");
+
+        if (testObject.is_valid()) {
+            printf("object is valid!\n");
+        }
     }
 
     return 0;

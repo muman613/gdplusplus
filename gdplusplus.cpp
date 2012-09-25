@@ -1,7 +1,80 @@
 #include <gd.h>
 #include <dlfcn.h>
+#include <strings.h>
 #include "gd_protos.h"
 #include "gdplusplus.h"
+
+/**
+ *
+ */
+
+gdImageObject::gdImageObject(gdLibrary* pLib, int sx, int sy)
+:   m_gdpp(pLib),
+    m_isValid(false),
+    m_imagePtr(0L)
+{
+    // ctor
+    if (m_gdpp->is_valid()) {
+        m_imagePtr = m_gdpp->gdImageCreateTrueColor( sx, sy );
+        m_isValid = (m_imagePtr != 0)?true:false;
+    }
+}
+
+gdImageObject::gdImageObject(gdLibrary* pLib, const char* sFilename)
+:   m_gdpp(pLib),
+    m_isValid(false),
+    m_imagePtr(0L)
+{
+    // ctor
+    char *rpos;
+    FILE* iFp = 0L;
+
+    if ((rpos = rindex((char *)sFilename, '.')) != 0) {
+        rpos++;
+        if (*rpos != 0) {
+            fprintf(stderr, "extension = %s\n", rpos );
+            iFp = fopen( sFilename, "r" );
+            if (iFp == 0) {
+                fprintf(stderr, "ERROR: Unable to open file %s!\n", sFilename);
+            } else {
+                if (strcasecmp(rpos, "jpg") == 0) {
+                    m_imagePtr = m_gdpp->gdImageCreateFromJpeg( iFp );
+                    m_isValid = (m_imagePtr != 0L)?true:false;
+                } else if (strcasecmp(rpos, "png") == 0 ) {
+                    m_imagePtr = m_gdpp->gdImageCreateFromPng( iFp );
+                    m_isValid = (m_imagePtr != 0L)?true:false;
+                } else if (strcasecmp(rpos, "gif") == 0) {
+                    m_imagePtr = m_gdpp->gdImageCreateFromGif( iFp );
+                    m_isValid = (m_imagePtr != 0L)?true:false;
+                } else if (strcasecmp(rpos, "bmp") == 0) {
+                    m_imagePtr = m_gdpp->gdImageCreateFromWBMP( iFp );
+                    m_isValid = (m_imagePtr != 0L)?true:false;
+                }
+                fclose( iFp );
+            }
+        }
+    }
+
+    fprintf(stderr, "m_imagePtr = 0x%p\n", m_imagePtr);
+
+    return;
+}
+
+gdImageObject::~gdImageObject()
+{
+    // dtor
+    if (m_isValid) {
+        if (m_imagePtr) {
+            m_gdpp->gdFree( m_imagePtr );
+            m_imagePtr = 0L;
+            m_isValid = false;
+        }
+    }
+}
+
+bool gdImageObject::is_valid() const {
+    return m_isValid;
+}
 
 gdLibrary::gdLibrary()
 :   m_isValid(false)
@@ -10,9 +83,9 @@ gdLibrary::gdLibrary()
     m_lib = dlopen("libgd.so", RTLD_NOW);
     if (m_lib != 0) {
         m_isValid = true;
-        printf("lib = %p\n", m_lib);
+        //fprintf(stderr, "lib = %p\n", m_lib);
     } else {
-        printf("ERROR: %s\n", dlerror());
+        fprintf(stderr, "ERROR: %s\n", dlerror());
         return;
     }
 

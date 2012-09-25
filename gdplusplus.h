@@ -5,6 +5,25 @@
 #ifndef _GDPLUSPLUS_H__
 #define __GDPLUSPLUS_H__
 
+class gdLibrary;
+
+class gdImageObject {
+public:
+    gdImageObject(gdLibrary* pLib, int sx, int sy);
+    gdImageObject(gdLibrary* pLib, const char* szFilename);
+    gdImageObject(const gdImageObject& copy);
+    virtual ~gdImageObject();
+
+    bool        is_valid() const;
+
+    gdImagePtr operator *();
+
+protected:
+    gdLibrary*  m_gdpp;
+    bool        m_isValid;
+    gdImagePtr  m_imagePtr;
+};
+
 class gdLibrary {
 public:
     gdLibrary();
